@@ -1,0 +1,58 @@
+import secrets  # Imports the random module for choosing characters randomly
+import string  # Imports the string module for character sets
+
+
+def generate_password(length, include_special, include_numbers):
+    if length < 4:  # Checks whether the password length is too short
+        print("Password length should be at least 4 characters.") 
+        return None  
+
+    include_special = include_special == 'y'  # Converts user input to boolean for special characters
+    include_numbers = include_numbers == 'y'  # Converts user input to boolean for numbers
+
+    # If special characters are included, set the special variable to punctuation characters. If not, use only letter
+    if include_special == True:
+        special = string.punctuation  
+    else:
+        special = string.ascii_letters
+    # If numbers are included, set the digits variable to digit characters. If not, use only letter
+    if include_numbers == True:
+        digits = string.digits  
+    else:
+        digits = string.ascii_letters
+
+    uppercase = string.ascii_uppercase  
+    lowercase = string.ascii_lowercase 
+
+    required = [  # Creates a list with at least one character from each required category
+        secrets.choice(lowercase),  
+        secrets.choice(uppercase),
+        secrets.choice(digits),  
+        secrets.choice(special), 
+    ]
+
+    all_characters = lowercase + uppercase + digits + special  # Combines all allowed characters
+    remaining = [secrets.choice(all_characters) for _ in range(length - 4)]  # Fills the rest of the password with random characters
+    
+    password_chars = required + remaining  # Combines the required characters with the extra ones
+    secrets.SystemRandom().shuffle(password_chars)  # Randomizes the order of characters
+
+    return "".join(password_chars)  # Joins the characters into a single password string
+
+
+print("\nWelcome to the Password Generator!")  # Prints a welcome message
+try:
+    length = int(input("\nEnter the desired length of the password: "))  # Gets the password length from the user
+except ValueError:
+    print("Please enter a valid integer.")
+    exit()
+
+try:
+    include_special = input("Include special characters? (y/n): ").lower()
+    include_numbers = input("Include numbers? (y/n): ").lower()
+except ValueError:
+    print("Please enter 'y' or 'n'.")
+    exit()
+
+password = generate_password(length, include_special, include_numbers)  # Calls the generator function with the entered length and user preferences
+print("\nGenerated Password:", password)
